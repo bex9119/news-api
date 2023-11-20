@@ -5,7 +5,7 @@ const { handleServerErrors, handlePSQLErrors } = require('./errors')
 
 const app = express()
 
-app.get('/api/', getEndpoints)
+app.get('/api', getEndpoints)
 
 app.get('/api/topics', getTopics)
 
