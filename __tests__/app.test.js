@@ -3,17 +3,19 @@ const seed = require('../db/seeds/seed')
 const app = require('../app')
 const db = require('../db/connection')
 const data = require('../db/data/test-data/index')
+const endpoints = require('../endpoints.json')
 
 beforeAll(() => seed(data))
 afterAll(() => db.end())
 
 describe('GET /api - controller set up correctly', () => {
-    test('200: should respond connected, when making a successful request', () => {
+    test('200: return an object which describes all available endpoints on the API', () => {
         return request(app)
-        .get('/api/')
+        .get('/api')
         .expect(200)
         .then(({body}) => {
-            expect(body.msg).toBe('Connected!')
+            const responseEndpoints = body.endpoints
+            expect(responseEndpoints).toEqual(endpoints)
         })
     });
     test('404: when invalid path given, returns error', () => {
