@@ -1,16 +1,25 @@
-const express = require('express')
-const { getEndpoints, invalidPath } = require('./controllers/api.controller')
-const { getTopics } = require('./controllers/topics.controller')
-const { handleServerErrors, handlePSQLErrors } = require('./errors')
+const express = require("express");
+const { getEndpoints, invalidPath } = require("./controllers/api.controller");
+const { getTopics } = require("./controllers/topics.controller");
+const {
+  handleServerErrors,
+  handlePSQLErrors,
+  handleCustomeErrors,
+} = require("./errors");
+const { getArticles } = require("./controllers/articles.controller");
 
-const app = express()
+const app = express();
 
-app.get('/api', getEndpoints)
+app.get("/api", getEndpoints);
 
-app.get('/api/topics', getTopics)
+app.get("/api/topics", getTopics);
 
-app.all('*', invalidPath)
+app.get("/api/articles/:article_id", getArticles);
 
-app.use(handleServerErrors)
+app.all("*", invalidPath);
 
-module.exports = app
+app.use(handlePSQLErrors);
+app.use(handleCustomeErrors);
+app.use(handleServerErrors);
+
+module.exports = app;
