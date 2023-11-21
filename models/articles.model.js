@@ -7,6 +7,6 @@ exports.selectArticleById = (article_id) => {
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
-      return rows;
+      return rows[0];
     });
 };

@@ -50,15 +50,16 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article).toHaveLength(1);
-        expect(typeof article[0].author).toBe("string");
-        expect(typeof article[0].title).toBe("string");
-        expect(typeof article[0].article_id).toBe("number");
-        expect(typeof article[0].body).toBe("string");
-        expect(typeof article[0].topic).toBe("string");
-        expect(typeof article[0].created_at).toBe("string");
-        expect(typeof article[0].votes).toBe("number");
-        expect(typeof article[0].article_img_url).toBe("string");
+        expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String)
+        })
       });
   });
   test("404: return Not Found when given a valid article_id which does not exist", () => {
