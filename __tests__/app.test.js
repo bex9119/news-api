@@ -81,15 +81,13 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 
-describe.skip('GET /api/articles', () => {
-    test('200: return array of article objects with a comment count, sorted by created_at in desc order, without body property ', () => {
+describe('GET /api/articles', () => {
+    test('200: 200: return array of article objects with a comment count, without body', () => {
         return request(app)
         .get('/api/articles')
         .expect(200)
         .then(({body}) => {
             expect(body.articles).toHaveLength(13)
-            //Set up sorted by
-            expect(body.articles).toBeSorted(body.articles.created_at, {descending: true})
             body.articles.forEach((article) => {
                 expect(article).toMatchObject({
                     author: expect.any(String),
@@ -103,5 +101,43 @@ describe.skip('GET /api/articles', () => {
                 })
             })
         })
+    });
+    test('200: return array of article objects with a comment count, sorted by created_at in desc order, without body property ', () => {
+        return request(app)
+        .get('/api/articles?sort_by=created_at&order=DESC')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(13)
+            expect(body.articles).toBeSortedBy("created_at", {
+                descending: true})
+            body.articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number),
+                })
+            })
+        })
+    });
+    test('400: return Bad Request when passed an invalid sort_by query', () => {
+        return request(app)
+        .get('/api/articles?sort_by=not_valid&order=DESC')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });  
+    });
+    test('400: return Bad Request when passed an invalid order query', () => {
+        return request(app)
+        .get('/api/articles?sort_by=created_at&order=invalid_order')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });  
     });
 });

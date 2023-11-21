@@ -10,3 +10,31 @@ exports.selectArticleById = (article_id) => {
       return rows[0];
     });
 };
+
+exports.selectArticles = (sort_by, order) => {
+    const validSortBy = ['created_at']
+    const validOrder = ['DESC', 'ASC']
+    if(sort_by && !validSortBy.includes(sort_by)) {
+        return Promise.reject({status: 400, msg: 'Bad Request'})
+    }
+    if(order && !validOrder.includes(order)) {
+        return Promise.reject({status: 400, msg: 'Bad Request'})  
+    }
+
+    let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id):: int AS comment_count FROM comments
+    RIGHT JOIN articles ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id `
+
+    if(sort_by) {
+        queryString += `ORDER BY ${sort_by} `
+    }
+
+    if(order) {
+        queryString += `${order}`
+    }
+    return db
+    .query(queryString)
+    .then(({rows}) => {
+        return rows
+    })
+}
