@@ -107,7 +107,7 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
-    test('200: array of comments for the given article_id', () => {
+    test('200: return array of comments for the valid article_id', () => {
         return request(app)
         .get('/api/articles/3/comments')
         .expect(200)
@@ -141,7 +141,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe("Bad Request");
           });
       });
-      test("200: return an empty array when article has no comments associated with the article", () => {
+      test("200: return an empty array when given a existing article which has no comments associated with it", () => {
         return request(app)
         .get('/api/articles/2/comments')
         .expect(200)
