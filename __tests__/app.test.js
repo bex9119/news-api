@@ -154,5 +154,66 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
 });
 
+describe('POST /api/articles/:article_id/comments', () => {
+        const commentToPost = {
+            username: 'rogersop',
+            body: 'uh-oh'}    
+    test('should add a comment for a specific article, return the posted comment', () => {
+        return request(app)
+        .post('/api/articles/3/comments')
+        .send(commentToPost)
+        .expect(201)
+        .then(({ body }) => {
+            const {postedComment} = body
+            console.log(postedComment)
+            expect(postedComment).toEqual({
+                    comment_id: 19,
+                    body: 'uh-oh',
+                    article_id: 3,
+                    author: 'rogersop',
+                    votes: 0,
+                    created_at: expect.any(String)
+                  })
+        })
+    });
+    test("400: return Bad Request when posting to a valid article_id which does not exist", () => {
+        return request(app)
+          .post("/api/articles/999/comments")
+          .send(commentToPost)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("400: return Bad Request when posting to an invalid article_id", () => {
+        return request(app)
+        .post("/api/articles/not-an-id/comments")
+        .send(commentToPost)
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("400: return Bad Request when posting without a required key (no body)", () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({username: 'rogersop'})
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("400: return Bad Request when posting without a valid author", () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({
+            username: 'not_a_username',
+            body: 'uh-oh'} )
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
 
+});
 
