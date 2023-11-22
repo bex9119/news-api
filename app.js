@@ -7,6 +7,7 @@ const {
   handleCustomeErrors,
 } = require("./errors");
 const { getArticles, getArticlesById } = require("./controllers/articles.controller");
+const { getArticleCommentsById } = require("./controllers/comments.controller");
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.get("/api/topics", getTopics);
 app.get('/api/articles', getArticles)
 
 app.get("/api/articles/:article_id", getArticlesById);
+
+app.get('/api/articles/:article_id/comments', getArticleCommentsById)
 
 app.all("*", invalidPath);
 

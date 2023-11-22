@@ -80,7 +80,6 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-
 describe('GET /api/articles', () => {
     test('200: return array of article objects with a comment count, sorted by created_at in desc order, without body property ', () => {
         return request(app)
@@ -106,3 +105,54 @@ describe('GET /api/articles', () => {
     });
 
 });
+
+describe('GET /api/articles/:article_id/comments', () => {
+    test('200: return array of comments for the valid article_id', () => {
+        return request(app)
+        .get('/api/articles/3/comments')
+        .expect(200)
+        .then(({ body }) => {
+            const {comments} = body
+            expect(comments).toHaveLength(2)
+            expect(comments).toBeSortedBy("created_at", {
+                descending: true})
+            comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                article_id: 3               
+            })
+            })
+        })
+    });
+    test("404: return Not Found when given a valid article_id which does not exist", () => {
+        return request(app)
+          .get("/api/articles/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
+      test("400: return Bad Request when given an invalid article_id", () => {
+        return request(app)
+          .get("/api/articles/not-an-id/comments")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("200: return an empty array when given a existing article which has no comments associated with it", () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.comments).toEqual([])
+        })
+      })
+});
+
+
+

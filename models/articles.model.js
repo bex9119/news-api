@@ -10,7 +10,6 @@ exports.selectArticleById = (article_id) => {
       return rows[0];
     });
 };
-
 exports.selectArticles = () => {
 
     let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id):: int AS comment_count FROM comments
