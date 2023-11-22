@@ -84,7 +84,7 @@ describe("GET /api/articles/:article_id", () => {
 
 
 
-describe.skip('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
     test('200: array of comments for the given article_id', () => {
         return request(app)
         .get('/api/articles/3/comments')
@@ -103,4 +103,20 @@ describe.skip('GET /api/articles/:article_id/comments', () => {
             })
         })
     });
+    test("404: return Not Found when given a valid article_id which does not exist", () => {
+        return request(app)
+          .get("/api/articles/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
+      test("400: return Bad Request when given an invalid article_id", () => {
+        return request(app)
+          .get("/api/articles/not-an-id/comments")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
 });
