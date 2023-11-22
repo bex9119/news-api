@@ -113,6 +113,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({ body }) => {
             const {comments} = body
+            expect(comments).toHaveLength(2)
             expect(comments).toBeSortedBy("created_at", {
                 descending: true})
             comments.forEach((comment) => {
