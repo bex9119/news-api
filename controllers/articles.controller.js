@@ -8,3 +8,7 @@ exports.getArticles = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getArticleCommentsById = (req, res, next) => {
+  
+}

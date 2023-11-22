@@ -79,3 +79,28 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
+
+
+
+
+describe.skip('GET /api/articles/:article_id/comments', () => {
+    test('200: array of comments for the given article_id', () => {
+        return request(app)
+        .get('/api/articles/3/comments')
+        .expect(200)
+        .then(({ body }) => {
+            const {comments} = body
+            comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                article_id: 3               
+            })
+            })
+        })
+    });
+});
