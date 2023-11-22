@@ -6,7 +6,7 @@ const {
   handlePSQLErrors,
   handleCustomeErrors,
 } = require("./errors");
-const { getArticles } = require("./controllers/articles.controller");
+const { getArticles, getArticlesById } = require("./controllers/articles.controller");
 const { getArticleCommentsById } = require("./controllers/comments.controller");
 
 const app = express();
@@ -15,7 +15,9 @@ app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 
-app.get("/api/articles/:article_id", getArticles);
+app.get('/api/articles', getArticles)
+
+app.get("/api/articles/:article_id", getArticlesById);
 
 app.get('/api/articles/:article_id/comments', getArticleCommentsById)
 
