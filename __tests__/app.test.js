@@ -119,4 +119,13 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe("Bad Request");
           });
       });
+      test("200: return an empty array when article has no comments associated with the article", () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.comments).toEqual([])
+        })
+      })
 });
+
