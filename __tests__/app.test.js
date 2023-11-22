@@ -84,14 +84,13 @@ describe("GET /api/articles/:article_id", () => {
 describe('GET /api/articles', () => {
     test('200: return array of article objects with a comment count, sorted by created_at in desc order, without body property ', () => {
         return request(app)
-        .get('/api/articles?sort_by=created_at&order=DESC')
+        .get('/api/articles')
         .expect(200)
         .then(({body}) => {
             expect(body.articles).toHaveLength(13)
             expect(body.articles).toBeSortedBy("created_at", {
                 descending: true})
             body.articles.forEach((article) => {
-                
                 expect(article).toEqual({
                     author: expect.any(String),
                     title: expect.any(String),
