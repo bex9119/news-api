@@ -155,7 +155,88 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
 });
 
+describe('POST /api/articles/:article_id/comments', () => {
+        const commentToPost = {
+            username: 'rogersop',
+            body: 'uh-oh'}    
+    test('should add a comment for a specific article, return the posted comment', () => {
+        return request(app)
+        .post('/api/articles/3/comments')
+        .send(commentToPost)
+        .expect(201)
+        .then(({ body }) => {
+            const {postedComment} = body
+            expect(postedComment).toEqual({
+                    comment_id: 19,
+                    body: 'uh-oh',
+                    article_id: 3,
+                    author: 'rogersop',
+                    votes: 0,
+                    created_at: expect.any(String)
+                  })
+        })
+    });
+    test('should add a comment for a specific article, return the posted comment, will ignore unnecessary properties on the request', () => {
+        return request(app)
+        .post('/api/articles/5/comments')
+        .send({
+            username: 'rogersop',
+            body: 'ignore me please',
+            votes: 100000,
+            comment_id: 50} )
+        .expect(201)
+        .then(({ body }) => {
+            const {postedComment} = body
+            expect(postedComment).toEqual({
+                    comment_id: 20,
+                    body: 'ignore me please',
+                    article_id: 5,
+                    author: 'rogersop',
+                    votes: 0,
+                    created_at: expect.any(String)
+                  })
+        })
+    });
+    test("404: return Not Found when posting to a valid article_id which does not exist", () => {
+        return request(app)
+          .post("/api/articles/999/comments")
+          .send(commentToPost)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
+      test("400: return Bad Request when posting to an invalid article_id", () => {
+        return request(app)
+        .post("/api/articles/not-an-id/comments")
+        .send(commentToPost)
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("400: return Bad Request when posting without a required key (no body)", () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({username: 'rogersop'})
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("404: return Not Found when posting without a valid author", () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({
+            username: 'not_a_username',
+            body: 'uh-oh'} )
+        .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
 
+});
 
 
 
