@@ -22,3 +22,19 @@ exports.selectArticles = () => {
         return rows
     })
 }
+
+exports.patchByArticleId = (article_id, patchArticle) => {
+  return db
+    .query(`SELECT votes FROM articles WHERE article_id = $1;`, [article_id])
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+      const updatedVote = rows[0].votes += patchArticle.inc_votes
+      return db
+      .query(`UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;`, [updatedVote, article_id])
+    })
+    .then(({rows}) => {
+      return rows[0]
+    })
+};
