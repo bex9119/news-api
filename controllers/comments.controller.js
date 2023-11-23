@@ -23,7 +23,10 @@ exports.getArticleCommentsById = (req, res, next) => {
   }
 
   exports.deleteCommentById = (req, res, next) => {
-    const {commment_id} = req.params
-    console.log(commment_id)
-    removeComment(commment_id)
+    const {comment_id} = req.params
+    removeComment(comment_id)
+    .then(() => {
+      res.status(204).send()
+    })
+    .catch(next)
   }

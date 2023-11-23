@@ -238,23 +238,6 @@ describe('POST /api/articles/:article_id/comments', () => {
 
 });
 
-
-
-
-
-
-
-describe.skip('DELETE /api/comments/:comment_id', () => {
-    test('204: delete a comment by comment_id, response has no content ', () => {
-        return request(app)
-        .delete('/api/comments/3')
-        .expect(204)
-    });
-});
-
-
-
-
 describe('PATCH /api/articles/:article_id', () => {
     test('update an article by article_id, return updated article', () => {
         const patchArticle = { inc_votes : 1 }
@@ -274,7 +257,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 votes: 1,
                 article_img_url: expect.any(String)
             })
-          }); 
+        }); 
     });
     test('400: return Bad Request when inc_votes is not a number', () => {
         const patchArticle = { inc_votes : 'not a number' }
@@ -284,7 +267,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Bad Request");
-          });
+        });
     });
     test('400: return Bad Request when attempting to add anything other than inc_votes', () => {
         const patchArticle = { not_a_key : '10' }
@@ -294,25 +277,48 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Bad Request");
-          });
+        });
     });
-        test("404: return Not Found when given a valid article_id which does not exist", () => {
-            const patchArticle = { inc_votes : 1 }
-            return request(app)
-            .patch('/api/articles/999')
-            .send(patchArticle)
-              .then(({ body }) => {
-                expect(body.msg).toBe("Not Found");
-              });
-          });
-          test("400: return Bad Request when given an invalid article_id", () => {
-            const patchArticle = { inc_votes : 1 }
-            return request(app)
-            .patch('/api/articles/not-an-id')
-            .send(patchArticle)
-              .then(({ body }) => {
-                expect(body.msg).toBe("Bad Request");
-              });
-            });
+    test("404: return Not Found when given a valid article_id which does not exist", () => {
+        const patchArticle = { inc_votes : 1 }
+        return request(app)
+        .patch('/api/articles/999')
+        .send(patchArticle)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("400: return Bad Request when given an invalid article_id", () => {
+        const patchArticle = { inc_votes : 1 }
+        return request(app)
+        .patch('/api/articles/not-an-id')
+        .send(patchArticle)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+        });
+    });
 });
 
+describe.only('DELETE /api/comments/:comment_id', () => {
+    test('204: delete a comment by comment_id, response has no content ', () => {
+        return request(app)
+        .delete('/api/comments/3')
+        .expect(204)
+    });
+    test('400: return Bad Request when passed an invalid comment_id', () => {
+        return request(app)
+        .delete('/api/comments/not-a-valid-id')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+        })
+    });
+    test('404: return Not Found when passed an valid comment_id which does not exist', () => {
+        return request(app)
+        .delete('/api/comments/999')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+        })
+    });
+});

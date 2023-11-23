@@ -13,11 +13,16 @@ exports.insertComment = (article_id, {username, body}) => {
     .query(`INSERT INTO comments (article_id, author, body)
             VALUES ($1, $2, $3) RETURNING *`, [article_id, username, body])
     .then(({rows}) => {
-
           return rows[0]
     })
 }
 
 exports.removeComment = (comment_id) => {
-  console.log(comment_id)
+  return db
+  .query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id])
+  .then(({ rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+  })
 }
