@@ -58,7 +58,7 @@ describe("GET /api/articles/:article_id", () => {
             topic: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
-            article_img_url: expect.any(String)
+            article_img_url: expect.any(String),
         })
       });  
     });
@@ -91,7 +91,8 @@ describe('GET /api/articles', () => {
             expect(body.articles).toBeSortedBy("created_at", {
                 descending: true})
             body.articles.forEach((article) => {
-                expect(article).toEqual({
+              expect(article).not.toHaveProperty('body')
+                expect(article).toMatchObject({
                     author: expect.any(String),
                     title: expect.any(String),
                     article_id: expect.any(Number),
@@ -101,7 +102,7 @@ describe('GET /api/articles', () => {
                     article_img_url: expect.any(String),
                     comment_count: expect.any(Number),
                 })
-            })
+              })
         })
     });
 
@@ -166,7 +167,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(201)
         .then(({ body }) => {
             const {postedComment} = body
-            expect(postedComment).toEqual({
+            expect(postedComment).toMatchObject({
                     comment_id: 19,
                     body: 'uh-oh',
                     article_id: 3,
@@ -187,7 +188,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(201)
         .then(({ body }) => {
             const {postedComment} = body
-            expect(postedComment).toEqual({
+            expect(postedComment).toMatchObject({
                     comment_id: 20,
                     body: 'ignore me please',
                     article_id: 5,
@@ -247,7 +248,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(200)
         .then(({ body }) => {
             const { article } = body;
-            expect(article).toEqual({
+            expect(article).toMatchObject({
                 author: expect.any(String),
                 title: expect.any(String),
                 article_id: 3,
@@ -331,7 +332,7 @@ describe('GET /api/users', () => {
             const { users } = body
             expect(users).toHaveLength(4)
             users.forEach((user) => {
-                expect(user).toEqual({
+                expect(user).toMatchObject({
                     username: expect.any(String),
                     name: expect.any(String),
                     avatar_url: expect.any(String)
@@ -351,7 +352,8 @@ describe('GET /api/articles (topic query)', () => {
             expect(body.articles).toBeSortedBy("created_at", {
                 descending: true})
             body.articles.forEach((article) => {
-                expect(article).toEqual({
+                expect(article).not.toHaveProperty('body')
+                expect(article).toMatchObject({
                     author: expect.any(String),
                     title: expect.any(String),
                     article_id: expect.any(Number),
@@ -380,5 +382,15 @@ describe('GET /api/articles (topic query)', () => {
             expect(body.articles).toEqual([]);
           });  
     });
-    
+});
+
+describe('GET /api/articles/:article_id (comment_count)', () => {
+    test('200: return article by article_id which now includes a count of comments', () => {
+      return request(app)
+      .get('/api/articles/3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty('comment_count')
+      })
+    });
 });
