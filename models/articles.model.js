@@ -10,12 +10,21 @@ exports.selectArticleById = (article_id) => {
       return rows[0];
     });
 };
-exports.selectArticles = () => {
+exports.selectArticles = (topic) => {
+    const validTopics = ['cats', 'mitch', 'test']
 
+    if(topic && !validTopics.includes(topic)) {
+      return Promise.reject({status: 400, msg: 'Bad Request'})
+  }
     let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id):: int AS comment_count FROM comments
-    RIGHT JOIN articles ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id ORDER BY created_at DESC`
+    RIGHT JOIN articles ON articles.article_id = comments.article_id`
     
+    if(topic) {
+      queryString += ` WHERE articles.topic = '${topic}'
+      GROUP BY articles.article_id ORDER BY created_at DESC`
+
+  } else {
+      queryString += ` GROUP BY articles.article_id ORDER BY created_at DESC`}
     return db
     .query(queryString)
     .then(({rows}) => {
