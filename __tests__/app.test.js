@@ -341,3 +341,45 @@ describe('GET /api/users', () => {
         })
     });
 });
+
+describe('GET /api/articles (topic query)', () => {
+    test('200: return articles filtered by topic using a query', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(12)
+            expect(body.articles).toBeSortedBy("created_at", {
+                descending: true})
+            body.articles.forEach((article) => {
+                expect(article).toEqual({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number),
+                })
+            })
+        })
+    });
+    test('404: return Not Found when passed an invalid topic', () => {
+        return request(app)
+        .get('/api/articles?topic=not_valid')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });  
+    });
+    test('200: return empty array when passed a valid topic with no articles associated with the query', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles).toEqual([]);
+          });  
+    });
+    
+});
