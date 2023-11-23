@@ -12,11 +12,7 @@ exports.selectArticleById = (article_id) => {
     });
 };
 exports.selectArticles = (topic) => {
-    // const validTopics = ['cats', 'mitch', 'test', 'coding', 'football', 'cooking']
 
-  //   if(topic && !validTopics.includes(topic)) {
-  //     return Promise.reject({status: 400, msg: 'Bad Request'})
-  // }
     let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id):: int AS comment_count FROM comments
     RIGHT JOIN articles ON articles.article_id = comments.article_id`
     
