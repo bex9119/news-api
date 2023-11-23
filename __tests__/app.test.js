@@ -156,3 +156,16 @@ describe('GET /api/articles/:article_id/comments', () => {
 
 
 
+
+
+
+describe.skip('DELETE /api/comments/:comment_id', () => {
+    test('204: delete a comment by comment_id, response has no content ', () => {
+        return request(app)
+        .delete('/api/comments/3')
+        .expect(204)
+    });
+});
+
+
+

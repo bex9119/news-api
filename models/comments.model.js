@@ -8,3 +8,6 @@ exports.selectCommentsForArticle = (article_id) => {
     });
 }
 
+exports.removeComment = (comment_id) => {
+  console.log(comment_id)
+}

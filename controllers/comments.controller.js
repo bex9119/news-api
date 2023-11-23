@@ -1,5 +1,5 @@
 const { selectArticleById } = require("../models/articles.model");
-const { selectCommentsForArticle } = require("../models/comments.model");
+const { selectCommentsForArticle, removeComment } = require("../models/comments.model");
 
 exports.getArticleCommentsById = (req, res, next) => {
     const { article_id } = req.params;
@@ -10,4 +10,10 @@ exports.getArticleCommentsById = (req, res, next) => {
         res.status(200).send({ comments });
       })
       .catch(next);
+  }
+
+  exports.deleteCommentById = (req, res, next) => {
+    const {commment_id} = req.params
+    console.log(commment_id)
+    removeComment(commment_id)
   }
