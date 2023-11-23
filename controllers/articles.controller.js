@@ -1,4 +1,5 @@
 const { selectArticleById, selectArticles, patchByArticleId } = require("../models/articles.model");
+const { selectTopicSlugs } = require("../models/topics.models");
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
@@ -11,8 +12,13 @@ exports.getArticlesById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { topic }  = req.query
-  selectArticles(topic)
-  .then((articles) => {
+  const selectPromises = [selectArticles(topic)]
+  if(topic) {
+    selectPromises.push(selectTopicSlugs(topic))
+  }
+  Promise.all(selectPromises)
+  .then((reslovedPromises) => {
+    const articles = reslovedPromises[0]
     res.status(200).send({articles})
   })
   .catch(next)

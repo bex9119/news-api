@@ -364,17 +364,17 @@ describe('GET /api/articles (topic query)', () => {
             })
         })
     });
-    test('400: return Bad Request when passed an invalid topic', () => {
+    test('404: return Not Found when passed an invalid topic', () => {
         return request(app)
         .get('/api/articles?topic=not_valid')
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
-            expect(body.msg).toBe("Bad Request");
+            expect(body.msg).toBe("Not Found");
           });  
     });
     test('200: return empty array when passed a valid topic with no articles associated with the query', () => {
         return request(app)
-        .get('/api/articles?topic=test')
+        .get('/api/articles?topic=paper')
         .expect(200)
         .then(({ body }) => {
             expect(body.articles).toEqual([]);
