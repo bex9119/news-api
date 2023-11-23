@@ -70,6 +70,9 @@
   "POST /api/articles/:article_id/comments": {
     "description": "POSTS a new comment to selected article_id",
     "queries": [],
+    "exampleRequest": {
+      "username": "rogersop",
+      "body": "uh-oh"}, 
     "exampleResponse": {
       "comments":     
         {
@@ -99,6 +102,9 @@
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
     }
+  },
+  "DELETE /api/comments/:comment_id" : {
+    "description": "removes a comment by comment_id"
   },
   "GET /api/users": {
     "description": "serves an array of all users",
