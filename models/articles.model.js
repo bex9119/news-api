@@ -11,7 +11,7 @@ exports.selectArticleById = (article_id) => {
     });
 };
 exports.selectArticles = (topic) => {
-    const validTopics = ['cats', 'mitch', 'test']
+    const validTopics = ['cats', 'mitch', 'test', 'coding', 'football', 'cooking']
 
     if(topic && !validTopics.includes(topic)) {
       return Promise.reject({status: 400, msg: 'Bad Request'})
