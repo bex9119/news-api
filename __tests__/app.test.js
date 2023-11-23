@@ -60,7 +60,8 @@ describe("GET /api/articles/:article_id", () => {
             votes: expect.any(Number),
             article_img_url: expect.any(String)
         })
-      });  });
+      });  
+    });
 
   test("404: return Not Found when given a valid article_id which does not exist", () => {
     return request(app)
@@ -154,6 +155,90 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
 });
 
+describe('POST /api/articles/:article_id/comments', () => {
+        const commentToPost = {
+            username: 'rogersop',
+            body: 'uh-oh'}    
+    test('should add a comment for a specific article, return the posted comment', () => {
+        return request(app)
+        .post('/api/articles/3/comments')
+        .send(commentToPost)
+        .expect(201)
+        .then(({ body }) => {
+            const {postedComment} = body
+            expect(postedComment).toEqual({
+                    comment_id: 19,
+                    body: 'uh-oh',
+                    article_id: 3,
+                    author: 'rogersop',
+                    votes: 0,
+                    created_at: expect.any(String)
+                  })
+        })
+    });
+    test('should add a comment for a specific article, return the posted comment, will ignore unnecessary properties on the request', () => {
+        return request(app)
+        .post('/api/articles/5/comments')
+        .send({
+            username: 'rogersop',
+            body: 'ignore me please',
+            votes: 100000,
+            comment_id: 50} )
+        .expect(201)
+        .then(({ body }) => {
+            const {postedComment} = body
+            expect(postedComment).toEqual({
+                    comment_id: 20,
+                    body: 'ignore me please',
+                    article_id: 5,
+                    author: 'rogersop',
+                    votes: 0,
+                    created_at: expect.any(String)
+                  })
+        })
+    });
+    test("404: return Not Found when posting to a valid article_id which does not exist", () => {
+        return request(app)
+          .post("/api/articles/999/comments")
+          .send(commentToPost)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
+      test("400: return Bad Request when posting to an invalid article_id", () => {
+        return request(app)
+        .post("/api/articles/not-an-id/comments")
+        .send(commentToPost)
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("400: return Bad Request when posting without a required key (no body)", () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({username: 'rogersop'})
+        .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("404: return Not Found when posting without a valid author", () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({
+            username: 'not_a_username',
+            body: 'uh-oh'} )
+        .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
+
+});
+
+
 
 
 
@@ -168,4 +253,66 @@ describe.skip('DELETE /api/comments/:comment_id', () => {
 });
 
 
+
+
+describe('PATCH /api/articles/:article_id', () => {
+    test('update an article by article_id, return updated article', () => {
+        const patchArticle = { inc_votes : 1 }
+        return request(app)
+        .patch('/api/articles/3')
+        .send(patchArticle)
+        .expect(200)
+        .then(({ body }) => {
+            const { article } = body;
+            expect(article).toEqual({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: 3,
+                body: expect.any(String),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: 1,
+                article_img_url: expect.any(String)
+            })
+          }); 
+    });
+    test('400: return Bad Request when inc_votes is not a number', () => {
+        const patchArticle = { inc_votes : 'not a number' }
+        return request(app)
+        .patch('/api/articles/3')
+        .send(patchArticle)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+    });
+    test('400: return Bad Request when attempting to add anything other than inc_votes', () => {
+        const patchArticle = { not_a_key : '10' }
+        return request(app)
+        .patch('/api/articles/3')
+        .send(patchArticle)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+    });
+        test("404: return Not Found when given a valid article_id which does not exist", () => {
+            const patchArticle = { inc_votes : 1 }
+            return request(app)
+            .patch('/api/articles/999')
+            .send(patchArticle)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Not Found");
+              });
+          });
+          test("400: return Bad Request when given an invalid article_id", () => {
+            const patchArticle = { inc_votes : 1 }
+            return request(app)
+            .patch('/api/articles/not-an-id')
+            .send(patchArticle)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request");
+              });
+            });
+});
 
