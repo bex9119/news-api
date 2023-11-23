@@ -50,7 +50,7 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article).toMatchObject({
+        expect(article).toEqual({
             author: expect.any(String),
             title: expect.any(String),
             article_id: 3,
@@ -58,7 +58,8 @@ describe("GET /api/articles/:article_id", () => {
             topic: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
-            article_img_url: expect.any(String)
+            article_img_url: expect.any(String),
+            comment_count: 2
         })
       });  
     });
