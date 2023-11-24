@@ -432,3 +432,28 @@ describe('Express Router', () => {
       })
     });
 });
+
+describe('GET /api/users/:username', () => {
+  test('200: return selected user by username, respond with an array of objects, each with a username, name and avatar_url', () => {
+    return request(app)
+    .get('/api/users/lurker')
+    .expect(200)
+    .then(({ body }) => {
+        const { user } = body
+            expect(user).toMatchObject({
+                username: 'lurker',
+                name: expect.any(String),
+                avatar_url: expect.any(String)
+            })
+    })
+
+});
+test("404: return Not Found when given a username which does not exist", () => {
+  return request(app)
+    .get("/api/users/999")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Not Found");
+    });
+});
+});
