@@ -1,35 +1,20 @@
 const express = require("express");
-const { getEndpoints, invalidPath } = require("./controllers/api.controller");
-const { getTopics } = require("./controllers/topics.controller");
+
 const {
   handleServerErrors,
   handlePSQLErrors,
   handleCustomeErrors,
 } = require("./errors");
-const { getArticles, getArticlesById, patchArticles } = require("./controllers/articles.controller");
-const { getArticleCommentsById, postComment, deleteCommentById } = require("./controllers/comments.controller");
-const { getUsers } = require("./controllers/users.controller");
+
+const apiRouter = require("./routes/api-router");
+const { invalidPath } = require("./controllers/api.controller");
 
 const app = express();
 app.use(express.json())
 
-app.get("/api", getEndpoints);
+app.use('/', apiRouter)
 
-app.get("/api/topics", getTopics);
-
-app.get('/api/articles', getArticles)
-
-app.get("/api/articles/:article_id", getArticlesById);
-
-app.get('/api/users', getUsers)
-
-app.patch('/api/articles/:article_id', patchArticles)
-
-app.get('/api/articles/:article_id/comments', getArticleCommentsById)
-
-app.post('/api/articles/:article_id/comments', postComment)
-
-app.delete('/api/comments/:comment_id', deleteCommentById)
+app.use('/api', apiRouter)
 
 app.all("*", invalidPath);
 
