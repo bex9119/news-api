@@ -421,3 +421,14 @@ describe('GET /api/articles (sorting queries)', () => {
         });  
   });
 });
+
+describe('Express Router', () => {
+    test('return ok message if api router set up correctly', () => {
+      return request(app)
+      .get('/')
+      .expect(200)
+      .then(({ body }) =>  {
+        expect(body.msg).toBe('API Router OK')
+      })
+    });
+});
