@@ -22,7 +22,6 @@ In your terminal enter:
 
 <u>Install the required dependencies</u>
 
-    npm init -y
     npm install
 
 <u>To connect locally to the test and development databases</u>
