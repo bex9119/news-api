@@ -5,7 +5,7 @@ const db = require("../db/connection");
 const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
 
-beforeAll(() => seed(data));
+beforeEach(() => seed(data));
 afterAll(() => db.end());
 
 describe("GET /api - controller set up correctly", () => {
@@ -189,7 +189,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .then(({ body }) => {
             const {postedComment} = body
             expect(postedComment).toMatchObject({
-                    comment_id: 20,
+                    comment_id: 19,
                     body: 'ignore me please',
                     article_id: 5,
                     author: 'rogersop',
@@ -456,4 +456,64 @@ test("404: return Not Found when given a username which does not exist", () => {
       expect(body.msg).toBe("Not Found");
     });
 });
+});
+
+describe('PATCH /api/comments/:comment', () => {
+  test('update a comment by comment_id, return updated comment, increase votes', () => {
+      const patchComment = { inc_votes : 1 }
+      return request(app)
+      .patch('/api/comments/1')
+      .send(patchComment)
+      .expect(200)
+      .then(({ body }) => {
+        const {updatedComment} = body
+        expect(updatedComment).toMatchObject({
+                comment_id: 1,
+                body: expect.any(String),
+                article_id: expect.any(Number),
+                author: expect.any(String),
+                votes: 17,
+                created_at: expect.any(String)
+              })
+    })
+  })
+
+  test('400: return Bad Request when inc_votes is not a number', () => {
+      const patchComment = { inc_votes : 'not a number' }
+      return request(app)
+      .patch('/api/comments/3')
+      .send(patchComment)
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test('400: return Bad Request when attempting to add anything other than inc_votes', () => {
+      const patchComment = { not_a_key : '10' }
+      return request(app)
+      .patch('/api/comments/3')
+      .send(patchComment)
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: return Not Found when given a valid article_id which does not exist", () => {
+      const patchComment = { inc_votes : 1 }
+      return request(app)
+      .patch('/api/comments/999')
+      .send(patchComment)
+      .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("400: return Bad Request when given an invalid comment_id", () => {
+      const patchComment = { inc_votes : 1 }
+      return request(app)
+      .patch('/api/comments/not-an-id')
+      .send(patchComment)
+      .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
