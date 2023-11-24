@@ -11,11 +11,12 @@ exports.getArticlesById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic }  = req.query
-  const selectPromises = [selectArticles(topic)]
+  const { topic, sort_by, order }  = req.query
+  const selectPromises = [selectArticles(topic, sort_by, order)]
   if(topic) {
     selectPromises.push(selectTopicSlugs(topic))
   }
+  
   Promise.all(selectPromises)
   .then((reslovedPromises) => {
     const articles = reslovedPromises[0]
