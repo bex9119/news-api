@@ -394,3 +394,30 @@ describe('GET /api/articles/:article_id (comment_count)', () => {
       })
     });
 });
+
+describe('GET /api/articles (sorting queries)', () => {
+    test('200: return articles when  sorted by a valid column (author) and in ascending order', () => {
+      return request(app)
+      .get('/api/articles?sort_by=comment_count&order=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy('comment_count')
+      }) 
+    });
+    test('400: return Bad Request when passed an invalid sort_by query', () => {
+      return request(app)
+      .get('/api/articles?sort_by=not_valid&order=DESC')
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });  
+  });
+  test('400: return Bad Request when passed an invalid order query', () => {
+      return request(app)
+      .get('/api/articles?sort_by=created_at&order=invalid_order')
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });  
+  });
+});
