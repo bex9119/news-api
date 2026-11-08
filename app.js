@@ -18,7 +18,7 @@ app.use('/', apiRouter)
 
 app.use('/api', apiRouter)
 
-app.all("*", invalidPath);
+app.all("/{*splat}", invalidPath);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomeErrors);
