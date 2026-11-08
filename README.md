@@ -36,7 +36,7 @@ This will add the correct database name for each environment.
 <u>To create and seed the local databases</u>
 
     npm run setup-dbs
-    npm run  seed
+    npm run seed
 
 <u>To run the tests</u>
 
